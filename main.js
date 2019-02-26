@@ -3,7 +3,7 @@ const url = "http://127.0.0.1/quiz/API/index.php/"
 var app = new Vue({
       el:"#app",
       data:{
-            Wellcome:"Welcome to Quizes!",
+            Wellcome:"Welcome to Quize!",
             Info:'Please enter user name!',
             Quizes:"",
             user_name:"",
