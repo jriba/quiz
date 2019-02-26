@@ -5,9 +5,9 @@ P.S. This was first time I used Vue.js.
 
 ## INSTALLATION
 
--To run this app You need an some web server with php installed and mysql server for database.
--To set up database execute attached sql-dump file, to create necessary database and tables with some example data.
--After that place project directory with all containing files in Your server public folder, except for sql-dump.sql.
+To run this app You need an some web server with php installed and mysql server for database.
+To set up database execute attached sql-dump file, to create necessary database and tables with some example data.
+After that create director "quiz" in Your server public folder, and put there all files from this repository, except for sql-dump.sql.
 
 -Check if app can connect to DB if not change database connection data in API/classes/database.php
     -DB connection default values
