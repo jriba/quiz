@@ -1,9 +1,9 @@
-#QUIZ
+# QUIZ
 
 QUIZ is Vue.js application working with API to recieve and store data. This application is created as task to show my skills and knowledge.
 P.S. This was first time I used Vue.js.
 
-##INSTALLATION
+## INSTALLATION
 
 -To run this app You need an some web server with php installed and mysql server for database.
 -To set up database execute attached sql-dump file, to create necessary database and tables with some example data.
@@ -22,7 +22,7 @@ P.S. This was first time I used Vue.js.
 -after all is set up open project in Your browser.
     http://127.0.0.1/quiz/
 
-###USAGE
+### USAGE
 
 To start quiz You must provide user_name and slect quiz and click "Start quiz".
 If user name is not enered or quiz is not selected You will reciew error message.
