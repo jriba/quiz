@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Quiz</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"> 
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+</head>
+<body>
+    <div id="app"> 
+        <!-- MENU BLOCK -->
+        <div class="row" v-if="show_menu">
+            <div class="col-12">
+                <div class = 'row'>
+                    <div class="col-lg-4 col-sm-6 offset-lg-4 offset-sm-2" style="text-align: center">
+                        <h2>Welcome to Quiz!</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4 col-sm-6 offset-lg-4 offset-sm-2 allert-bottom alert alert-danger" v-if="show_error_message">
+                        <span></span>{{error_message}}</span>
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class='col-lg-4 col-sm-6 offset-lg-4 offset-sm-2'>
+                        <label for="user">Username:</label> <input class="form-control input input-sm" id="user"  v-on:keyUp="userNameChanges()" v-model="user_name" placeholder="Please enter name">                  
+                    </div>
+                </div>
+                <div class="row">
+                    <div class='col-lg-4 col-sm-6 offset-lg-4 offset-sm-2'>
+                        <label for="quizSelect">Quiz:</label>
+                        <select v-model="quiz_select" id="quizSelect" class="form-control">
+                            <option value="-1">
+                                ---
+                            </option>
+                            <option  v-for="quiz in Quizes" v-bind:value="quiz.ID">
+                                {{ quiz.QUIZ_NAME }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row" >
+                    <div class='col-lg-12' style="text-align:center">
+                        <button v-on:click="startQuiz()"  class = 'btn btn-sm btn-info' id="start">Start quiz</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- QUIZ PART -->
+        <div class="question"  v-if="show_quiz">
+            <div v-for="quiz_question in quiz.questions" class="question" v-if="show_Quiz_Question == quiz_question.question_id">
+                <div class="row">
+                    <div class="col-lg-4 offset-lg-4" style="text-align: center">
+                        <h2>{{quiz_question.question}}</h2>
+                    </div>
+                </div>
+                <div class="row">           
+                    <div class="col-lg-6 offset-lg-3 col-sm-8 offset-sm-2" style="text-align: center">
+                        <button 
+                            v-for="question_answer in quiz.answers[quiz_question.question_id]" 
+                            v-bind:value="question_answer.answer_id"
+                           
+                             v-on:click="selectAnswer(question_answer.answer_id)" 
+                             class="col-lg-5 col-sm-6 btn btn-primary notActive " 
+                        ><i class="fas fa-check" v-if="selected_answer == question_answer.answer_id"></i> {{question_answer.answer}}</button>
+                    </div>
+                </div>
+                <br/>
+                <div class="row">           
+                    <div class="col-lg-4 offset-lg-4 col-sm-8 offset-sm-2" style="text-align: center" v-if="lastQuetion === false">
+                        <button v-on:click="nextQuestion()" class="col-lg-5 col-sm-6 btn btn-warning next_question" >Next Question</button>
+                    </div>
+                    <div class="col-lg-4 offset-lg-4 col-sm-8 offset-sm-2" style="text-align: center" v-if="lastQuetion">
+                        <button v-on:click="getResults()" class="col-lg-5 col-sm-6 btn btn-success next_question" >Save and Show results</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESULTS -->
+        <div class="results" v-if="show_result">
+            <div class="row">
+                <div class="col-lg-4 offset-lg-4" style="text-align: center">
+                    <h2>Thank You!</h2>
+                </div>
+            </div>
+            <div class="row">           
+                <div class="col-lg-4 offset-lg-4 col-sm-8 offset-sm-2" style="text-align: center">
+                    <span>Your Result is {{correct_answers_given}} out of {{quiz.question_count}}!</span>
+                </div>
+            </div>
+            <div class="row">           
+                <div class="col-lg-4 offset-lg-4 col-sm-8 offset-sm-2" style="text-align: center">
+                    <button v-on:click="startNewQuiz()" class="col-lg-5 col-sm-6 btn btn-success " >Start new quiz!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="main.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+<style>
+    .Wellcome {
+        text-align: center;
+    }
+    .quiz-title{
+        text-align: center;
+    }
+    .notActive{
+        color            : #3276b1;
+        background-color : #fff;
+        margin: 2px;
+    }  
+</style>
+</html>
